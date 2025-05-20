@@ -1,0 +1,12 @@
+
+
+{% extends 'home/layout.html' %}
+{% block title %}Registration{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <p>Well,you have the account now</p>
+    <p>... <a href="{% url 'users:login' %}">Login here</a>.</p>
+</div>
+
+    {% endblock %}

@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'home/css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'home/css/layout.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            {% if user.is_authenticated %}
+            <p>Welcome, {{ user.username }}! <a href="{% url 'users:logout' %}">Logout</a></p>
+            {% else %}
+            <p><a href="{% url 'users:login' %}">Login</a> | <a href="{% url 'users:registration' %}">Register</a></p>
+            {% endif %}
+            <div class="sidebar-item">
+                <a href="{% url '' %}">Home</a>
+            </div>
+            <div class="sidebar-item">
+                <a href="{% url 'about' %}">About</a>
+            </div>
+            <div class="sidebar-item">
+                <a href="{% url 'products' %}">Our flowers</a>
+            </div>
+        </nav>
+    </header>
+
+    <aside>
+        <form>
+            <input type="search"
+                   name="q" placeholder="Search product" />
+            <input type="submit" value="Search!" />
+        </form>
+        <ul>
+            <li><a href="#">Category 1</a></li>
+            <li><a href="#">Category 2</a></li>
+            <li><a href="#">Category 3</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+{% extends 'home/layout.html' %}
+{% load static %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+
+<div class="one_prod">
+    <section>
+        {% if product.picture %}
+            <div class="image-container">
+                <img class="img-article-left" src="{{ product.picture.url }}" alt="{{ product.name }}" />
+            </div>
+        {% else %}
+            <p>No image available.</p>
+        {% endif %}
+    </section>
+    <h2 style="font-size: 1em; font-weight: bold;">TITLE: {{ product.name }}</h2>
+    <p style="margin-left: 10px; font-size: 0.75em;">DESCRIPTION: {{ product.description }}</p>
+    <p style="margin-left: 10px; font-size: 0.75em;">COST: is ${{ product.price }}</p>
+
+</div>
+
+{% endblock %}

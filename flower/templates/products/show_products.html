@@ -1,0 +1,33 @@
+{% extends 'home/layout.html' %}
+{% block title %}Gifts{% endblock %}
+
+{% block content %}
+<div class="category-nav">
+    <h1>Our products</h1>
+    {% include 'products/includes/category.html' %}
+</div>
+
+<div class="container">
+    {% if flowers %}
+    {% for el in flowers %}
+    <div class="product">
+        <div class="product-text">
+            <h2>{{ el.name }}</h2>
+            <p>{{ el.price }}P</p>
+        </div>
+        {% if el.picture %}
+        <div class="image-container">
+            <img class="img-article-left" src="{{ el.picture.url }}" alt="{{ el.name }}" />
+        </div>
+        {% else %}
+        <p>No image available.</p>
+        {% endif %}
+        <p><a href="{% url 'products-detail' el.id %}">Open</a></p>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>No products</p>
+    {% endif %}
+</div>
+<br /><a href="{% url 'create' %}">Create </a>
+{% endblock %}
