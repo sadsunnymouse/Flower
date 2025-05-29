@@ -1,0 +1,46 @@
+{% extends 'home/layout.html' %}
+{% block title %}Favorites{% endblock %}
+
+{% block content %}
+<div class="favorites-page">
+    <div class="page-header">
+        <h1 class="page-title">Your Favorites</h1>
+    </div>
+    
+    <div class="favorites-grid">
+        {% if favorites %}
+            {% for favorite in favorites %}
+            <div class="favorite-card">
+                <div class="favorite-image-container">
+                    {% if favorite.product.image %}
+                    <img src="{{ favorite.product.image.url }}" alt="{{ favorite.product.name }}" class="favorite-image" />
+                    {% else %}
+                    <div class="no-image">No image available</div>
+                    {% endif %}
+                </div>
+                <div class="favorite-info">
+                    <h2 class="favorite-name">{{ favorite.product.name }}</h2>
+                    <p class="favorite-price">${{ favorite.product.price }}</p>
+                    
+                    {% if user.is_authenticated %}
+                    <span id="cart-item-{{ favorite.product.id }}">
+                        {% for pid, quantity in cart_items.items %}
+                            {% if pid == favorite.product.id|stringformat:"i" %}{{ quantity }}{% endif %}
+                        {% empty %}
+                            0
+                        {% endfor %}
+                    </span>
+                    <button class="add-to-cart-btn" data-product-id="{{ favorite.product.id }}">Add to Cart</button>
+                    <button class="favorite-btn" data-product-id="{{ favorite.product.id }}">
+                        <i class="fas fa-heart red"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-favorites">No favorites yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -2,32 +2,50 @@
 {% block title %}Gifts{% endblock %}
 
 {% block content %}
-<div class="category-nav">
-    <h1>Our products</h1>
-    {% include 'products/includes/category.html' %}
+<div class="products-page">
+    <div class="page-header">
+        <h1 class="page-title">Our Products</h1>
+    {% if user.is_superuser %}
+    <a href="{% url 'add_product' %}" class="auth-submit">Add Product</a>
+    {% endif %}
+    </div>
+    
+    <div class="products-grid">
+        {% if products %}
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image-container">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" />
+                    {% else %}
+                    <div class="no-image">No image available</div>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h2 class="product-name">{{ product.name }}</h2>
+                    <p class="product-price">${{ product.price }}</p>
+                    {% if user.is_authenticated %}
+                    <span id="cart-item-{{ product.id }}">
+                        {% for pid, quantity in cart_items.items %}
+                        {% if pid == product.id %}{{ quantity }}{% endif %}
+                        {% empty %}
+                            0
+                        {% endfor %}
+                    </span>
+                    <button class="add-to-cart-btn" data-product-id="{{ product.id }}">Add to Cart</button>
+                    <button class="favorite-btn" data-product-id="{{ product.id }}">
+                        <i class="{% if product.id in favorite_products %}fas fa-heart red{% else %}far fa-heart{% endif %}"></i>
+                    </button>
+                    {% endif %}
+
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-products">No products available</p>
+        {% endif %}
+    </div>
 </div>
 
-<div class="container">
-    {% if flowers %}
-    {% for el in flowers %}
-    <div class="product">
-        <div class="product-text">
-            <h2>{{ el.name }}</h2>
-            <p>{{ el.price }}P</p>
-        </div>
-        {% if el.picture %}
-        <div class="image-container">
-            <img class="img-article-left" src="{{ el.picture.url }}" alt="{{ el.name }}" />
-        </div>
-        {% else %}
-        <p>No image available.</p>
-        {% endif %}
-        <p><a href="{% url 'products-detail' el.id %}">Open</a></p>
-    </div>
-    {% endfor %}
-    {% else %}
-    <p>No products</p>
-    {% endif %}
-</div>
-<br /><a href="{% url 'create' %}">Create </a>
 {% endblock %}
+

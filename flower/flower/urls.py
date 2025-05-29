@@ -25,10 +25,16 @@ urlpatterns = [
     path('',include('home.urls')),
     path('products/',include('products.urls')),
     path('users/',include('users.urls', namespace="users")),
+    path('favorites/',include('favorites.urls')),
+    path('cart/',include('carts.urls')),
+    path('order/',include('orders.urls'))
+
+    
     
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

@@ -28,18 +28,28 @@ def login_user(request):
         return redirect('about')
     
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
-            login(request, user)
-            return redirect('')
-            
-  
+        form = LoginUserForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                if user.is_active:  # Проверяем активность пользователя
+                    login(request, user)
+                    messages.success(request, f"Welcome, {username}!")
+                    return redirect('')
+                else:
+                    messages.error(request, "Account is disabled")
+            else:
+                messages.error(request, "Invalid username or password")
+        else:
+            # Более подробный вывод ошибок
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
     else:
         form = LoginUserForm()
-    return render(request, 'users/login.html', {'form': form})
+    return render(request, 'users/login.html', {'form':form})
 
 
 def logout_view(request):

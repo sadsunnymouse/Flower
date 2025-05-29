@@ -1,17 +1,24 @@
 from django import forms
-from django.forms import ModelForm, TextInput, Textarea, NumberInput, FileInput
-from .models import Flowers
+from .models import Product, SubCategory
 
-class FlowersForm(ModelForm):
-
+class ProductAddForm(forms.ModelForm):
     class Meta:
-        model = Flowers
-        fields = ['name','quantity','price','description','picture']
-
-        widgets= {
-            'name' :TextInput(attrs={'class':'custom-form-control','placeholder':'name'}),
-            'quantity':NumberInput(attrs={'class':'custom-form-control','placeholder':'quantity'}),
-            'price':NumberInput(attrs={'class':'custom-form-control','placeholder':'price'}),
-            'description':Textarea(attrs={'class':'custom-form-control','placeholder':'description'}),
-            'picture':FileInput(attrs={'class':'custom-form-control','placeholder':'picture'})
+        model = Product
+        fields = ['name', 'subcategory', 'description', 'price', 'quantity', 'image']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'subcategory': forms.Select(attrs={'class': 'form-control'}),
         }
+        labels = {
+            'name': 'Name',
+            'subcategory': 'Subcategory',
+            'description': 'Description',
+            'price': 'Price',
+            'quantity': 'Quantity',
+            'image': 'Image',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Опционально: можно ограничить выбор подкатегорий
+        self.fields['subcategory'].queryset = SubCategory.objects.all()

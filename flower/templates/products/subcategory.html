@@ -1,0 +1,33 @@
+{% extends 'home/layout.html' %}
+
+{% block title %}{{ subcategory.name }}{% endblock %}
+
+{% block content %}
+<div class="subcategory-page">
+    <h1 class="page-title">
+        <span class="category-name">{{ subcategory.category.name }}</span> / 
+        <span class="subcategory-name">{{ subcategory.name }}</span>
+    </h1>
+    
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <a href="#" class="product-link">
+                {% if product.image %}
+                <div class="product-image-container">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" />
+                </div>
+                {% else %}
+                <div class="no-image">No image available</div>
+                {% endif %}
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-price">${{ product.price }}</p>
+                    
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

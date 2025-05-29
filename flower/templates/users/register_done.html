@@ -1,12 +1,14 @@
-
-
 {% extends 'home/layout.html' %}
-{% block title %}Registration{% endblock %}
+{% block title %}Registration Complete{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <p>Well,you have the account now</p>
-    <p>... <a href="{% url 'users:login' %}">Login here</a>.</p>
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="registration-complete">
+            <h2 class="auth-title">Registration Complete</h2>
+            <p class="success-message">Your account has been successfully created!</p>
+            <a href="{% url 'users:login' %}" class="auth-link">Login to your account</a>
+        </div>
+    </div>
 </div>
-
-    {% endblock %}
+{% endblock %}

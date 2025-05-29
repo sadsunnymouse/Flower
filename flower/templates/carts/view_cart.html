@@ -1,0 +1,133 @@
+{% extends 'home/layout.html' %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="cart-page">
+    <h1 class="page-title">Your Shopping Cart</h1>
+    
+    {% if cart_items %}
+    <div class="cart-items">
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr class="cart-item" data-item-id="{{ item.id }}">
+                    <td class="product-info">
+                        
+                        <span class="product-name">{{ item.product.name }}</span>
+                    </td>
+                    <td class="product-price">${{ item.product.price }}</td>
+                    <td class="product-quantity">
+                        <input type="number" 
+                               value="{{ item.quantity }}" 
+                               min="1" 
+                               max="{{ item.product.quantity }}"
+                               class="quantity-input">
+                    </td>
+                    <td class="product-total">${{ item.total_price }}</td>
+                    <td class="product-actions">
+                        <button class="remove-btn" data-item-id="{{ item.id }}">Remove</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="cart-summary">
+            <div class="total-price">
+                <span class="label">Total:</span>
+                <span class="value">${{ total_price }}</span>
+            </div>
+            <a href="{% url 'order' %}" class="checkout-btn">Proceed to Checkout</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-cart">
+        <p>Your cart is empty</p>
+        <a href="{% url 'products' %}" class="continue-shopping">Continue Shopping</a>
+    </div>
+    {% endif %}
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+    // Получаем CSRF токен из мета-тега
+    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+    
+    // Обработчик изменения количества
+    $('.quantity-input').on('change', function() {
+        const $input = $(this);
+        const itemId = $input.closest('.cart-item').data('item-id');
+        const newQuantity = $input.val();
+        
+        $.ajax({
+            url: `/cart/update/${itemId}/`,
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'  // Добавляем этот заголовок
+            },
+            data: {
+                'quantity': newQuantity
+            },
+            success: function(response) {
+                if (response.success) {
+                    const row = $(`.cart-item[data-item-id="${itemId}"]`);
+                    row.find('.product-total').text('$' + response.item_total);
+                    $('.cart-summary .value').text('$' + response.cart_total);
+                }
+            },
+            error: function(xhr) {
+                console.error('Error:', xhr.responseText);
+                alert('Error: ' + (xhr.responseJSON?.error || 'Update failed'));
+                $input.val($input.data('old-value'));
+            }
+        });
+    }).on('focus', function() {
+        $(this).data('old-value', $(this).val());
+    });
+
+    // Обработчик удаления товара
+    $('.remove-btn').on('click', function() {
+        if (!confirm('Удалить товар из корзины?')) return;
+        
+        const $btn = $(this);
+        const itemId = $btn.data('item-id');
+        const $row = $btn.closest('.cart-item');
+        
+        $.ajax({
+            url: `/cart/remove/${itemId}/`,
+            type: 'POST',
+            headers: {'X-CSRFToken': csrfToken},
+            success: function(response) {
+                if (response.success) {
+                    $row.remove();
+                    $('.cart-summary .value').text('$' + response.cart_total);
+                    
+                    if ($('.cart-item').length === 0) {
+                        $('.cart-items').html(`
+                            <div class="empty-cart">
+                                <p>Корзина пуста</p>
+                                <a href="{% url 'products' %}" class="continue-shopping">Продолжить покупки</a>
+                            </div>
+                        `);
+                    }
+                }
+            },
+            error: function() {
+                alert('Ошибка при удалении товара');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

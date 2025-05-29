@@ -1,0 +1,22 @@
+{% extends 'home/layout.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="product-detail">
+    <div class="product-image-container">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" />
+        {% else %}
+        <div class="no-image">No image available</div>
+        {% endif %}
+    </div>
+    <div class="product-info">
+        <h2 class="product-name">{{ product.name }}</h2>
+        <p class="product-price">${{ product.price }}</p>
+        <p>{{ product.description }}</p>
+        <a href="{% url 'toggle_favorite' product.id %}" class="favorite-btn">
+            <i class="{% if product in request.user.favorite.all %}fas fa-heart red{% else %}far fa-heart{% endif %}"></i>
+        </a>
+    </div>
+</div>
+{% endblock %}

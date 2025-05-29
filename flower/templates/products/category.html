@@ -1,0 +1,40 @@
+{% extends 'home/layout.html' %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+{% block content %}
+<div class="category-page">
+    <h1 class="page-title">{{ category.name }}</h1>
+    
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <a href="#" class="product-link">
+                {% if product.image %}
+                <div class="product-image-container">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" />
+                </div>
+                {% else %}
+                <div class="no-image">No image available</div>
+                {% endif %}
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-price">${{ product.price }}</p>
+                    <span id="cart-item-{{ product.id }}">
+                        {% for pid, quantity in cart_items.items %}
+                        {% if pid == product.id %}{{ quantity }}{% endif %}
+                        {% empty %}
+                        0
+                        {% endfor %}
+                    </span>
+                    <button class="add-to-cart-btn" data-product-id="{{ product.id }}">Add to Cart</button>
+                    <button class="favorite-btn" data-product-id="{{ product.id }}">
+                        <i class="{% if product in request.user.favorite.all %}fas fa-heart red{% else %}far fa-heart{% endif %}"></i>
+                    </button>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
