@@ -1,4 +1,5 @@
 {% extends 'home/layout.html' %}
+{% load cart_filters %}
 
 {% block title %}{{ category.name }}{% endblock %}
 
@@ -7,34 +8,41 @@
     <h1 class="page-title">{{ category.name }}</h1>
     
     <div class="products-grid">
+        {% if products %}
         {% for product in products %}
         <div class="product-card">
-            <a href="#" class="product-link">
-                {% if product.image %}
-                <div class="product-image-container">
+            
+            <div class="product-image-container">
+                <a href="{% url 'product_detail' product.id %}" class="product-link">
+                    {% if product.image %}
                     <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" />
-                </div>
-                {% else %}
-                <div class="no-image">No image available</div>
-                {% endif %}
-                <div class="product-info">
-                    <h3 class="product-name">{{ product.name }}</h3>
-                    <p class="product-price">${{ product.price }}</p>
+                    {% else %}
+                    <div class="no-image">No image available</div>
+                    {% endif %}
+                </a>
+            </div>
+            <div class="product-info">
+                <h2 class="product-name">{{ product.name }}</h2>
+                <p class="product-price">${{ product.price }}</p>
+                {% if user.is_authenticated %}
+                <div class="product-actions">
                     <span id="cart-item-{{ product.id }}">
-                        {% for pid, quantity in cart_items.items %}
-                        {% if pid == product.id %}{{ quantity }}{% endif %}
-                        {% empty %}
-                        0
-                        {% endfor %}
-                    </span>
-                    <button class="add-to-cart-btn" data-product-id="{{ product.id }}">Add to Cart</button>
+                            {{ cart_items|get_item:product.id|default:0 }}
+                        </span>
+                    <button class="add-to-cart-btn" data-product-id="{{ product.id }}" data-url="{% url 'add_to_cart' %}">
+                            Add to Cart
+                        </button>
                     <button class="favorite-btn" data-product-id="{{ product.id }}">
-                        <i class="{% if product in request.user.favorite.all %}fas fa-heart red{% else %}far fa-heart{% endif %}"></i>
+                        <i class="{% if product.id in favorite_products %}fas fa-heart red{% else %}far fa-heart{% endif %}"></i>
                     </button>
                 </div>
-            </a>
+                {% endif %}
+            </div>
         </div>
         {% endfor %}
+        {% else %}
+        <p class="no-products">No products available</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

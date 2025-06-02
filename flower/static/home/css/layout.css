@@ -523,6 +523,173 @@ body {
     }
 }
 
+
+/* Добавьте эти стили в ваш layout.css */
+
+/* Основные стили формы */
+.form-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px);
+    padding: 20px;
+}
+
+.form-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    width: 100%;
+    max-width: 600px;
+    transition: var(--transition);
+}
+
+.form-container:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.form-title {
+    text-align: center;
+    color: var(--secondary-color);
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.form-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background-color: var(--primary-color);
+}
+
+.product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Стили для групп формы */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--secondary-color);
+    font-size: 0.95rem;
+}
+
+/* Стили для полей ввода */
+.product-form input[type="text"],
+.product-form input[type="number"],
+.product-form select,
+.product-form textarea,
+.product-form input[type="file"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-family: 'Courier New', Courier, monospace;
+    transition: var(--transition);
+    background-color: #f9f9f9;
+}
+
+.product-form input[type="text"]:focus,
+.product-form input[type="number"]:focus,
+.product-form select:focus,
+.product-form textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(61, 170, 178, 0.2);
+    background-color: white;
+}
+
+.product-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Стили для ошибок */
+.form-error {
+    color: var(--error);
+    font-size: 0.8rem;
+    margin-top: 5px;
+    padding-left: 5px;
+}
+
+/* Стиль для кнопки отправки */
+.form-submit {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    transition: var(--transition);
+    margin-top: 10px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-submit:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+/* Стили для поля загрузки файла */
+.product-form input[type="file"] {
+    padding: 10px;
+    border: 1px dashed #ccc;
+    background-color: #f9f9f9;
+}
+
+.product-form input[type="file"]:hover {
+    background-color: #f0f0f0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 20px;
+    }
+    
+    .form-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 15px;
+    }
+    
+    .product-form input[type="text"],
+    .product-form input[type="number"],
+    .product-form select,
+    .product-form textarea {
+        padding: 10px 12px;
+    }
+    
+    .form-submit {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+}
+
+
+
 /* Стили для кнопки избранного */
 .favorite-btn {
     text-decoration: none;
@@ -757,3 +924,229 @@ body {
 .subcategory-link:hover {
     color: var(--primary-color);
 }
+
+
+/* Product Detail Page Styles */
+.product-detail-page {
+    padding: 2rem;
+}
+
+.product-detail-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+
+
+.main-product-image {
+    width: 100%;
+    max-width: 500px;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+}
+
+.product-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.product-name {
+    font-size: 2rem;
+    color: var(--secondary-color);
+    margin: 0;
+}
+
+.product-price {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.product-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.product-meta a {
+    color: var(--secondary-color);
+    text-decoration: none;
+}
+
+.product-meta a:hover {
+    text-decoration: underline;
+}
+
+.in-stock {
+    color: #28a745;
+}
+
+.out-of-stock {
+    color: var(--error);
+}
+
+.product-description {
+    margin-top: 1rem;
+}
+
+.product-description h3 {
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+}
+
+.product-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    align-items: center;
+}
+
+.cart-action {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.auth-required {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .product-detail-container {
+        flex-direction: column;
+    }
+    
+    .product-images, .product-info {
+        flex: none;
+    }
+}
+
+
+/* recently viewed products */
+.recently-viewed {
+    margin-top: 40px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.viewed-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.viewed-product {
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 5px;
+    transition: transform 0.3s;
+}
+
+.viewed-product:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.viewed-product img {
+    max-width: 100%;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.viewed-product p {
+    margin: 5px 0;
+    text-align: center;
+}
+/* Дополнения к существующему CSS */
+.container-text {
+    background-color: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin: 2rem auto;
+    max-width: 800px;
+    text-align: center;
+}
+
+.text-center {
+    text-align: center;
+    color: var(--text-color);
+}
+
+.recently-viewed {
+    background-color: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin: 2rem auto;
+    max-width: 1200px;
+}
+
+.viewed-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.viewed-product {
+    transition: var(--transition);
+}
+
+.viewed-product:hover {
+    transform: translateY(-5px);
+}
+
+
+
+.product-info {
+    padding: 0.5rem;
+}
+
+.product-name {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+}
+
+
+/* Стили для кнопки "Добавить в корзину" */
+.add-to-cart-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 20px; /* Отступы для кнопки */
+    border: none; /* Без рамки */
+    border-radius: var(--border-radius); /* Скругление углов */
+    cursor: pointer; /* Указатель при наведении */
+    font-family: 'Courier New', Courier, monospace; /* Шрифт */
+    font-weight: bold; /* Жирный шрифт */
+    transition: var(--transition); /* Плавный переход для стилей */
+    margin-top: 10px; /* Отступ сверху */
+}
+
+.add-to-cart-btn:hover {
+    background-color: var(--secondary-color); /* Цвет фона при наведении */
+    transform: translateY(-2px); /* Небольшая анимация при наведении */
+}
+
+.add-to-cart-btn:active {
+    transform: translateY(0); /* Возврат кнопки в исходное положение при нажатии */
+}
+

@@ -82,9 +82,5 @@ class Product(models.Model):
         super().save(*args, **kwargs)
     
     def get_absolute_url(self):
-        return reverse('product', kwargs={
-            'category_id': self.subcategory.category.id,
-            'subcategory_id': self.subcategory.id,
-            'product_id': self.id
-        })
+        return reverse('product_detail', kwargs={'product_id': self.id})
 # Create your models here.

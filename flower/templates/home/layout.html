@@ -1,169 +1,121 @@
 {% load static %}
+{% load cart_filters %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'home/css/reset.css' %}">
-    <link rel="stylesheet" href="{% static 'home/css/layout.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-</head>
-<body>
-    <header class="header">
-        <nav class="nav">
-            <div class="auth-links">
-                {% if user.is_authenticated %}
-                <p class="welcome-msg">Welcome, <span class="username">{{ user.username }}</span>! <a href="{% url 'users:logout' %}" class="auth-link">Logout</a></p>
-                {% else %}
-                <p class="auth-options">
-                    <a href="{% url 'users:login' %}" class="auth-link">Login</a> | 
-                    <a href="{% url 'users:registration' %}" class="auth-link">Register</a>
-                </p>
-                {% endif %}
-            </div>
-            
-            <div class="nav-links">
-                <div class="nav-item">
-                    <a href="{% url '' %}" class="nav-link">Home</a>
-                </div>
-                <div class="nav-item">
-                    <a href="{% url 'about' %}" class="nav-link">About</a>
-                </div>
-                <div class="nav-item">
-                    <a href="{% url 'products' %}" class="nav-link">Our flowers</a>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="csrf-token" content="{{ csrf_token }}">
+        <meta name="products-url" content="{% url 'products' %}">
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'home/css/reset.css' %}">
+        <link rel="stylesheet" href="{% static 'home/css/layout.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    </head>
+    <body>
+        <header class="header">
+            <nav class="nav">
+                <div class="auth-links">
+                    {% if user.is_authenticated %}
+                    <p class="welcome-msg">Welcome, <span class="username">{{ user.username }}</span>! <a
+                            href="{% url 'users:logout' %}" class="auth-link">Logout</a></p>
+                    {% else %}
+                    <p class="auth-options">
+                        <a href="{% url 'users:login' %}" class="auth-link">Login</a> |
+                        <a href="{% url 'users:registration' %}" class="auth-link">Register</a>
+                    </p>
+                    {% endif %}
                 </div>
                 
-                {% if user.is_authenticated %}
-                <div class="nav-item">
-                    <a href="{% url 'favorites' %}" class="nav-link">Favorites</a>
+                <div class="nav-links">
+                    <div class="nav-item">
+                        <a href="{% url '' %}" class="nav-link">Home</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'about' %}" class="nav-link">About</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'products' %}" class="nav-link">Our flowers</a>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    <div class="nav-item">
+                        <a href="{% url 'favorites' %}" class="nav-link">Favorites</a>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <div class="nav-item">
+                        <a href="{% url 'cart' %}" class="nav-link">Shopping cart
+                            <span id="cart-total-items" class="cart-count">
+                                {% if cart_total_items %}{{ cart_total_items }}{% else %}0{% endif %}
+                            </span>
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% endif %}
                 </div>
-                <div class="nav-item">
-                    <a href="{% url 'cart' %}" class="nav-link">Shopping cart</a>
+            </nav>
+        </header>
+        <div class="main-wrapper"> <!-- Обернули aside и main в этот контейнер -->
+            <aside class="sidebar">
+                <div class="categories">
+                    <h3 class="categories-title">Categories</h3>
+                    <ul class="categories-list">
+                        {% for category in categories %}
+                        <li class="category-item">
+                            <div class="category-header">
+                                {% if category.image %}
+                                <img class="category-image" src="{{ category.image.url }}" alt="{{ category.name }}" />
+                                {% endif %}
+                                <a href="{% url 'category_view' category.id %}" class="category-link">{{ category.name}}</a>
+                                {% if category.subcategories.all %}
+                                <button class="toggle-subcategories">+</button>
+                                {% endif %}
+
+
+                                {% if category.subcategories.all %}
+                                <ul class="subcategories-list">
+                                    {% for subcategory in category.subcategories.all %}
+                                    <li class="subcategory-item">
+                                        <div class="subcategory-header">
+                                            {% if subcategory.image %}
+                                            <img class="subcategory-image" src="{{ subcategory.image.url }}"
+                                                alt="{{ subcategory.name }}" />
+                                            {% endif %}
+                                            <a href="{% url 'subcategory_view' category.id subcategory.id %}"
+                                                class="subcategory-link">{{ subcategory.name }}</a>
+                                        </div>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                {% if messages %}
+                <div class="messages-container">
+                    {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">
+                        <span class="message-text">{{ message }}</span>
+                        <button class="message-close">&times;</button>
+                    </div>
+                    {% endfor %}
                 </div>
                 {% endif %}
-            </div>
-        </nav>
-    </header>
-
-    <div class="main-wrapper"> <!-- Обернули aside и main в этот контейнер -->
-        <aside class="sidebar">            
-            <div class="categories">
-                <h3 class="categories-title">Categories</h3>
-                <ul class="categories-list">
-                    {% for category in categories %}
-                    <li class="category-item">
-                        <div class="category-header">
-                            {% if category.image %}
-                            <img class="category-image" src="{{ category.image.url }}" alt="{{ category.name }}" />
-                            {% endif %}
-                            <a href="{% url 'category_view' category.id %}" class="category-link">{{ category.name }}</a>
-                            {% if category.subcategories.all %}
-                            <button class="toggle-subcategories">+</button>
-                            {% endif %}
-                        
-                        
-                            {% if category.subcategories.all %}
-                            <ul class="subcategories-list">
-                                {% for subcategory in category.subcategories.all %}
-                                <li class="subcategory-item">
-                                    <div class="subcategory-header">
-                                        {% if subcategory.image %}
-                                        <img class="subcategory-image" src="{{ subcategory.image.url }}" alt="{{ subcategory.name }}" />
-                                        {% endif %}
-                                        <a href="{% url 'subcategory_view' category.id subcategory.id %}" class="subcategory-link">{{ subcategory.name }}</a>
-                                    </div>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                            {% endif %}
-                        </div>
-                </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </aside>
-
-        <main class="main-content">
-            {% if messages %}
-            <div class="messages-container">
-                {% for message in messages %}
-                <div class="message message-{{ message.tags }}">
-                    <span class="message-text">{{ message }}</span>
-                    <button class="message-close">&times;</button>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-            {% block content %}
-            {% endblock %}
-        </main>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src={% static "home/js/toggle_sub.js" %}></script>
-    <script src={% static "home/js/add_to_fav.js" %}></script>
-    <script>
-        document.querySelectorAll('.message-close').forEach(button => {
-            button.addEventListener('click', function() {
-                this.closest('.message').style.display = 'none';
-            });
-        });
-        setTimeout(function() {
-            document.querySelectorAll('.message').forEach(message => {
-                message.style.display = 'none';
-            });
-        }, 3000);
-        
-        $(document).on('click', '.add-to-cart-btn', function() {
-            const productId = $(this).data('product-id');
-            $.ajax({
-                url: "{% url 'add_to_cart' %}",
-                type: "POST",
-                data: {
-                    'product_id': productId,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        $('#cart-item-' + productId).text(response.quantity);
-                    } else {
-                        const messagesContainer = $('.messages-container');
-                        if (messagesContainer.length === 0) {
-                            $('.main-content').prepend('<div class="messages-container"></div>');
-                        }
-                        $('.messages-container').append(
-                            `<div class="message message-error">
-                                <span class="message-text">${response.error}</span>
-                                <button class="message-close">&times;</button>
-                                </div>`
-                            );
-                            setTimeout(function() {
-                                 $('.message-error').fadeOut(300, function() {
-                                    $(this).remove();
-                                });
-                            }, 3000);
-                        }
-                    },
-                    error: function(xhr) {
-                        const messagesContainer = $('.messages-container');
-                        if (messagesContainer.length === 0) {
-                            $('.main-content').prepend('<div class="messages-container"></div>');
-                        }
-                        $('.messages-container').append(
-                            `<div class="message message-error">
-                                <span class="message-text">An error occurred. Please try again.</span>
-                                <button class="message-close">&times;</button>
-                            </div>`
-                        );
-                        setTimeout(function() {
-                            $('.message-error').fadeOut(300, function() {
-                                $(this).remove();
-                            });
-                        }, 3000);
-                    }
-                });
-            });
-        </script>
+                {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src={% static "home/js/toggle_sub.js" %}></script>
+        <script src={% static "home/js/add_to_fav.js" %}></script>
+        <script src={% static "home/js/mess.js" %}></script>
+        <script src={% static "home/js/add_to_cart.js" %}></script>
+        <script src={% static "home/js/cart_operations.js" %}></script>
     </body>
+
 </html>

@@ -1,43 +1,45 @@
 {% extends 'home/layout.html' %}
+{% load cart_filters %}
 {% block title %}Gifts{% endblock %}
 
 {% block content %}
 <div class="products-page">
     <div class="page-header">
         <h1 class="page-title">Our Products</h1>
-    {% if user.is_superuser %}
-    <a href="{% url 'add_product' %}" class="auth-submit">Add Product</a>
-    {% endif %}
     </div>
-    
+    {% if user.is_superuser %}
+        <a href="{% url 'add_product' %}" class="auth-submit">Add Product</a>
+        {% endif %}
     <div class="products-grid">
         {% if products %}
             {% for product in products %}
             <div class="product-card">
                 <div class="product-image-container">
-                    {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" />
-                    {% else %}
-                    <div class="no-image">No image available</div>
-                    {% endif %}
+                    <a href="{% url 'product_detail' product.id %}" class="product-link">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" />
+                        {% else %}
+                        <div class="no-image">No image available</div>
+                        {% endif %}
+                    </a>
                 </div>
+
                 <div class="product-info">
                     <h2 class="product-name">{{ product.name }}</h2>
                     <p class="product-price">${{ product.price }}</p>
                     {% if user.is_authenticated %}
-                    <span id="cart-item-{{ product.id }}">
-                        {% for pid, quantity in cart_items.items %}
-                        {% if pid == product.id %}{{ quantity }}{% endif %}
-                        {% empty %}
-                            0
-                        {% endfor %}
-                    </span>
-                    <button class="add-to-cart-btn" data-product-id="{{ product.id }}">Add to Cart</button>
-                    <button class="favorite-btn" data-product-id="{{ product.id }}">
-                        <i class="{% if product.id in favorite_products %}fas fa-heart red{% else %}far fa-heart{% endif %}"></i>
-                    </button>
+                    <div class="product-actions">
+                        <span id="cart-item-{{ product.id }}">
+                            {{ cart_items|get_item:product.id|default:0 }}
+                        </span>
+                        <button class="add-to-cart-btn" data-product-id="{{ product.id }}" data-url="{% url 'add_to_cart' %}">
+                            Add to Cart
+                        </button>
+                        <button class="favorite-btn" data-product-id="{{ product.id }}">
+                            <i class="{% if product.id in favorite_products %}fas fa-heart red{% else %}far fa-heart{% endif %}"></i>
+                        </button>
+                    </div>
                     {% endif %}
-
                 </div>
             </div>
             {% endfor %}
@@ -46,6 +48,4 @@
         {% endif %}
     </div>
 </div>
-
 {% endblock %}
-

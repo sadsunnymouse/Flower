@@ -13,6 +13,12 @@ class Cart(models.Model):
     
     def total_price(self):
         return sum(item.product.price * item.quantity for item in self.items.all())
+    @classmethod
+    def get_or_create_cart(cls, user):
+        try:
+            return cls.objects.get(user=user)
+        except cls.DoesNotExist:
+            return cls.objects.create(user=user)
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
@@ -27,3 +33,4 @@ class CartItem(models.Model):
     
     class Meta:
         unique_together = ('cart', 'product')
+        

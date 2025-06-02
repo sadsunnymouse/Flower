@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Favorite
 from products.models import Product
 from django.contrib import messages
+from carts.models import CartItem,Cart
 
 @login_required
 def toggle_favorite(request, product_id):
@@ -16,15 +17,17 @@ def toggle_favorite(request, product_id):
 
 @login_required
 def favorite_list(request):
-    if not request.user.is_authenticated:
-        messages.error(request, "Access is prohibited")
-        return redirect('')
     
     favorites = Favorite.objects.filter(user=request.user)
-    cart_items = request.session.get('cart', {})
+    cart_items = {}
+    
+    if request.user.is_authenticated:
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        # Use integer keys instead of strings
+        cart_items = {item.product.id: item.quantity for item in cart.items.all()}
     
     return render(request, 'favorites/favorite_list.html', {
         'favorites': favorites,
         'cart_items': cart_items,
-        'favorite_products': [f.product for f in favorites]
+        'favorite_products': Favorite.objects.filter(user=request.user).values_list('product', flat=True)
     })

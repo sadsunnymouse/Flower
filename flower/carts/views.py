@@ -7,8 +7,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 import json
 @login_required
 def add_to_cart(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({'error': 'Authentication required'}, status=401)
     if request.method == "POST" and request.user.is_authenticated:
         product_id = request.POST.get('product_id')
         product = get_object_or_404(Product, id=product_id)
@@ -18,7 +16,7 @@ def add_to_cart(request):
             return JsonResponse({'error': 'Product out of stock'}, status=400)
 
         # Получаем или создаем корзину
-        cart, created = Cart.objects.get_or_create(user=request.user)
+        cart = Cart.get_or_create_cart(user=request.user)
 
         # Проверяем, есть ли товар уже в корзине
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
@@ -29,16 +27,20 @@ def add_to_cart(request):
                 return JsonResponse({'error': 'Maximum available quantity reached'}, status=400)
             cart_item.quantity += 1
             cart_item.save()
+        
+        total_items = cart.total_items()
 
         return JsonResponse({
-        'success': True,
-        'quantity': cart_item.quantity,
-        'product_id': product.id
+            'success': True,
+            'quantity': cart_item.quantity,
+            'product_id': product.id,
+            'total_items': total_items,
+            'cart_items': {str(item.product.id): item.quantity for item in cart.items.all()}
         })
 
 @login_required
 def view_cart(request):
-    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart= Cart.get_or_create_cart(user=request.user)
     cart_items = cart.items.all().select_related('product')
     total_price = cart.total_price()
     
@@ -70,8 +72,9 @@ def update_cart_item(request, item_id):
                 'success': True,
                 'quantity': cart_item.quantity,
                 'item_total': str(cart_item.total_price()),
-                'cart_total': str(cart_item.cart.total_price())
-            })
+                'cart_total': str(cart_item.cart.total_price()),
+                'total_items': cart_item.cart.total_items()
+                })
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Invalid request'}, status=400)
@@ -84,5 +87,6 @@ def remove_cart_item(request, item_id):
     
     return JsonResponse({
         'success': True,
-        'cart_total': cart.total_price()
-    })
+        'cart_total': cart.total_price(),
+        'total_items': cart.total_items()
+        })

@@ -1,22 +1,64 @@
 {% extends 'home/layout.html' %}
+{% load cart_filters %}
 {% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
-<div class="product-detail">
-    <div class="product-image-container">
-        {% if product.image %}
-        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" />
-        {% else %}
-        <div class="no-image">No image available</div>
-        {% endif %}
-    </div>
-    <div class="product-info">
-        <h2 class="product-name">{{ product.name }}</h2>
-        <p class="product-price">${{ product.price }}</p>
-        <p>{{ product.description }}</p>
-        <a href="{% url 'toggle_favorite' product.id %}" class="favorite-btn">
-            <i class="{% if product in request.user.favorite.all %}fas fa-heart red{% else %}far fa-heart{% endif %}"></i>
-        </a>
+<div class="product-detail-page">
+    <div class="product-detail-container">
+        <div class="product-image-container">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="main-product-image" />
+            {% else %}
+                <div class="no-image">No image available</div>
+            {% endif %}
+        </div>
+        
+        <div class="product-info">Ы
+            <h1 class="product-name">{{ product.name }}</h1>
+            <p class="product-price">${{ product.price }}</p>
+            
+            <div class="product-meta">
+                <p><strong>Category:</strong> 
+                    <a href="{% url 'category_view' product.subcategory.category.id %}">
+                        {{ product.subcategory.category.name }}
+                    </a>
+                </p>
+                <p><strong>Subcategory:</strong> 
+                    <a href="{% url 'subcategory_view' product.subcategory.category.id product.subcategory.id %}">
+                        {{ product.subcategory.name }}
+                    </a>
+                </p>
+                <p><strong>Availability:</strong> 
+                    {% if product.available %}
+                        <span class="in-stock">In stock ({{ product.quantity }} available)</span>
+                    {% else %}
+                        <span class="out-of-stock">Out of stock</span>
+                    {% endif %}
+                </p>
+            </div>
+            
+            <div class="product-description">
+                <h3>Description</h3>
+                <p>{{ product.description }}</p>
+            </div>
+            
+            {% if user.is_authenticated %}
+            <div class="product-actions">
+                <span id="cart-item-{{ product.id }}">
+                    {{ cart_items|get_item:product.id|default:0 }}
+                </span>
+                <button class="add-to-cart-btn" data-product-id="{{ product.id }}" data-url="{% url 'add_to_cart' %}">Add to Cart</button>
+                <button class="favorite-btn" data-product-id="{{ product.id }}">
+                    <i class="{% if product.id in favorite_products %}fas fa-heart red{% else %}far fa-heart{% endif %}"></i>
+                </button>
+            </div>
+            {% else %}
+            <div class="auth-required">
+                <p>Please <a href="{% url 'users:login' %}">login</a> to add this product to your cart or favorites.</p>
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}
+

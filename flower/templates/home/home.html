@@ -1,8 +1,43 @@
 {% extends 'home/layout.html' %}
-{% block title %}{{ title }}{% endblock %}
+{% load history_tags %}
+
+{% block title %}Home{% endblock %}
 
 {% block content %}
-<div class="conteiner-text">
-    <h2>Welcome to "Bloom & Joy"</h2>
+<div class="container-text">
+    <h2 class="section-title">Welcome to "Bloom & Joy"</h2>
+    <p class="text-center">Your premier destination for floral arrangements and gifts</p>
 </div>
+
+{% if request.COOKIES.product_history %}
+<div class="recently-viewed section">
+    <h3 class="section-title">Your Recently Viewed Products</h3>
+    <div class="viewed-products-grid grid">
+        {% with request.COOKIES.product_history|split:',' as product_ids %}
+            {% for product_id in product_ids|slice:":5" %}
+                {% with product_id|get_product as product %}
+                    {% if product %}
+                    <div class="viewed-product card">
+                        <a href="{{ product.get_absolute_url }}" class="product-link">
+                            <div class="product-image-container">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                                {% else %}
+                                <div class="no-image">No image</div>
+                                {% endif %}
+                            </div>
+                            <div class="product-info">
+                                <h4 class="product-name">{{ product.name }}</h4>
+                                <p class="product-price price">${{ product.price }}</p>
+                            </div>
+                        </a>
+                    </div>
+                    {% endif %}
+                {% endwith %}
+            {% endfor %}
+        {% endwith %}
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}

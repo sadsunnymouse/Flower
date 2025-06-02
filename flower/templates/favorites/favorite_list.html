@@ -1,4 +1,5 @@
 {% extends 'home/layout.html' %}
+{% load cart_filters %}
 {% block title %}Favorites{% endblock %}
 
 {% block content %}
@@ -23,17 +24,17 @@
                     <p class="favorite-price">${{ favorite.product.price }}</p>
                     
                     {% if user.is_authenticated %}
-                    <span id="cart-item-{{ favorite.product.id }}">
-                        {% for pid, quantity in cart_items.items %}
-                            {% if pid == favorite.product.id|stringformat:"i" %}{{ quantity }}{% endif %}
-                        {% empty %}
-                            0
-                        {% endfor %}
-                    </span>
-                    <button class="add-to-cart-btn" data-product-id="{{ favorite.product.id }}">Add to Cart</button>
-                    <button class="favorite-btn" data-product-id="{{ favorite.product.id }}">
-                        <i class="fas fa-heart red"></i>
-                    </button>
+                    <div class="product-actions">
+                        <span id="cart-item-{{ favorite.product.id }}">
+                            {{ cart_items|get_item:favorite.product.id|default:0 }}
+                        </span>
+                        <button class="add-to-cart-btn" data-product-id="{{ favorite.product.id }}" data-url="{% url 'add_to_cart' %}">
+                            Add to Cart
+                        </button>
+                        <button class="favorite-btn" data-product-id="{{ favorite.product.id }}">
+                            <i class="{% if favorite.product.id in favorite_products %}fas fa-heart red{% else %}far fa-heart{% endif %}"></i>
+                        </button>
+                    </div>
                     {% endif %}
                 </div>
             </div>
